@@ -77,19 +77,24 @@ opening_msg() {
 case "$1" in
 	""|" " ) # print usage message if first argument is empty
 		usage
+	
 		;;
-	-s|--search ) # search parameter/argument
-		
-		# if search keyword is empty, exit with exit status 1
-		[ -z "$2" ] && \
-			echo "empty search keyword" && \
-			return 1
-		
-		# if search keyword is non-empty
-		grep -i "$2" $file_dir | \
-			sed 's/^\[\(.*\)\]\s\(.*\)/\n\n[\1] \2/g' | \
-			$pager -p "$2"
-		;;
+         -s|--search ) # search parameter/argument
+
+                # if search keyword is empty, exit with exit status 1
+                [ -z "$2" ] && \
+                        echo "empty search keyword" && \
+                        return 1
+
+                # if search keyword is non-empty
+                GREP_COLORS='ms=1;31;47' grep -iw --color=always "$2" $file_dir | \
+                        sed -n 's/^\[\(.*\)\]\s\(.*\)/\n\n[\1] \2/pg' | \
+                        $pager -R
+                ;;
+        -sn )   # returns the ayah number based on keyword
+                grep -iw "$2" $file_dir | \
+                        sed -n 's/^\[\(.*\)\]\s\(.*\)/\n[\1]/pg'
+                ;;	
 	-h|--help ) # prints help message/usage
 		usage
 		;;
